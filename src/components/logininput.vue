@@ -105,28 +105,34 @@
                 const fish10Values = [];
                 const fish11Values = [];
                 const fish12Values = [];
-                Object.entries(fish001Data).forEach(([key, value]) => {
-                  if (value === 1) {
-                    fish11Values.push(key);
-                  } else if (value === 2) {
-                    fish12Values.push(key)
-                  } else {
-                    fish10Values.push(key)
-                  }
-                });
                 const fish002Data = res.data.fishesID["002"];
                 const fish20Values = [];
                 const fish21Values = [];
                 const fish22Values = [];
-                Object.entries(fish002Data).forEach(([key, value]) => {
-                  if (value === 1) {
-                    fish21Values.push(key)
-                  } else if (value === 2) {
-                    fish22Values.push(key)
-                  } else {
-                    fish20Values.push(key)
-                  }
-                });
+                if( Object.hasOwn(res.data.fishesID,"001")){
+                  Object.entries(fish001Data).forEach(([key, value]) => {
+                    if (value === 1) {
+                      fish11Values.push(key);
+                    } else if (value === 2) {
+                      fish12Values.push(key)
+                    } else {
+                      fish10Values.push(key)
+                    }
+                  });
+                }
+
+                if(Object.hasOwn(res.data.fishesID,"002")){
+                  
+                  Object.entries(fish002Data).forEach(([key, value]) => {
+                    if (value === 1) {
+                      fish21Values.push(key)
+                    } else if (value === 2) {
+                      fish22Values.push(key)
+                    } else {
+                      fish20Values.push(key)
+                    }
+                  });
+                }
                 localStorage.setItem("fish10", JSON.stringify(fish10Values));
                 localStorage.setItem("fish11", JSON.stringify(fish11Values));
                 localStorage.setItem("fish12", JSON.stringify(fish12Values));
@@ -149,8 +155,6 @@
                 localStorage.setItem("registrationTime",formattedDate)
                 document.cookie = "token=" + res.data.token + "; path=/";
                 window.location.replace(`http://localhost:8080/home`); //括號內加上+res.data.token http://20.89.131.34:443/static/dist/home
-                //localStorage.getItem("fish")
-                //JSON.parse
               }
               else
               alert("登入失敗")

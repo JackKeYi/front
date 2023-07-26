@@ -30,15 +30,15 @@
       </v-btn>
     </template>
     <v-card color="black">
-      <div class="text-center" ><h2>仿生魚控制</h2></div>
-      <v-divider color="grey-lighten-5" :thickness="3"></v-divider>
+      <div class="text-center mt-2" ><h2>仿生魚控制</h2></div>
+      <v-divider color="grey-lighten-5" :thickness="3" class="mt-1"></v-divider>
       <v-row class="mt-3">
   <v-col>
     <div class="d-flex flex-column align-center">
       <h4>ID</h4>
       <v-divider width="50" class="border-opacity-100"
   color="yellow" :thickness="4"></v-divider>
-      <h2 class="mt-1">21</h2>
+      <v-select :items="FishId" v-model="controlFishId"></v-select>
     </div>
   </v-col>
   <v-col>
@@ -46,29 +46,32 @@
       <h4>模式</h4>
       <v-divider width="50" class="border-opacity-100"
   color="blue" :thickness="4"></v-divider>
-      <h2 class="mt-1">自動</h2>
+      <v-select :items="models"></v-select>
     </div>
   </v-col>
 </v-row>
-      <v-card-actions>
-        <v-btn color="blue"  icon="mdi mdi-arrow-up-drop-circle-outline" size="x-large" width="100" height="100"></v-btn>
+      <v-card-actions class="d-flex justify-center">
+        <v-btn color="blue"  icon="mdi mdi-arrow-up-drop-circle-outline" size="x-large" width="100" height="100" @click="ControlFish('up')"></v-btn>
       </v-card-actions>
-      <v-card-actions >
-        <v-row>
-          <v-col class="d-flex align-center">
-            <v-btn color="white"  icon="mdi mdi-arrow-left-drop-circle-outline" size="x-large" width="100" height="100" ></v-btn>
+      <v-card-actions>
+        <v-row > 
+          <v-col class="d-flex justify-center align-center">
+            <v-btn color="yellow" icon="mdi mdi-arrow-left-drop-circle-outline" size="x-large" width="80" height="80" @click="ControlFish('left')"></v-btn>
           </v-col>
-          <v-col class="d-flex align-center">
-            <v-btn color="white"  icon="mdi mdi-arrow-right-drop-circle-outline" size="x-large" width="100" height="100"></v-btn>
+          <v-col class="d-flex justify-center align-center">
+            <v-btn color="white" icon="mdi mdi-gesture-tap" size="x-large" width="80" height="80" @click="ControlFish('')"></v-btn>
+          </v-col>
+          <v-col class="d-flex justify-center align-center">
+            <v-btn color="yellow" icon="mdi mdi-arrow-right-drop-circle-outline" size="x-large" width="80" height="80" @click="ControlFish('right')"></v-btn>
           </v-col>
         </v-row>
       </v-card-actions>
-      <v-card-actions>
-        <v-btn color="blue"  icon="mdi mdi-arrow-down-drop-circle-outline" size="x-large" width="100" height="100"></v-btn>
+      <v-card-actions class="d-flex justify-center">
+        <v-btn color="blue"  icon="mdi mdi-arrow-down-drop-circle-outline" size="x-large" width="100" height="100" @click="ControlFish('down')"></v-btn>
       </v-card-actions>
 
       <v-card-actions>
-        <v-btn color="primary" block @click="dialogControl = false">關閉</v-btn>
+        <v-btn color="white" block @click="dialogControl = false">關閉</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -203,7 +206,6 @@
   <v-btn
     prepend-icon="mdi mdi-magnify"
     class="ml-3 mb-2 bg-grey"
-    to="/EditDatas"
   >查詢</v-btn>
 </v-card-actions>
       <v-card-actions>
@@ -278,6 +280,13 @@ function TranActive(active) {
         errnum:[],
         FishErrors: [],
         dialogControl:false,
+        models:[
+          "自動",
+          "急速",
+          "急速悠游",
+          "沿牆",
+        ],
+        controlFishId:null,
       }
     },
     methods:{
@@ -441,6 +450,48 @@ function TranActive(active) {
     getFishErrorsById(fishId) {
       return this.FishErrors[fishId] 
     },
+    ControlFish(move) {
+      const cookies = document.cookie.split("; ");
+      for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].split("=");
+          if (cookie[0] === "token") {
+          const token = cookie[1];
+          this.token = token;
+          break;
+            }
+          }
+
+        axios.post(
+                "http://20.89.131.34:443/api/v1/fish/control/",{
+                  "fishControl":{
+            "led":{
+            },
+            "action":{
+                [this.controlFishId]:move
+            },
+            "mode":{
+                
+            }
+        }
+            },{
+          headers: {
+            Authorization: `Bearer ${this.token}`
+          }
+        }
+          )
+          .then(res=> {
+              console.log(res);
+              if(res.status == 200){
+                alert("可以開始控制")
+              }
+              else
+              alert("控制失敗")
+          })
+          .catch(err=> {
+              console.log(err);
+              alert('控制失敗');
+          })
+        },
         
         
       
