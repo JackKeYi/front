@@ -302,7 +302,7 @@ function TranActive(active) {
 }
 
         axios.post(
-            "http://20.89.131.34:443/api/v1/fish/data/?section=001",{
+            "http://20.89.131.34:443/api/v1/fish/data/?section=002",{
               "fishData": {
                 [this.NewId] : {"bc": this.NewBc, "err": this.NewErro,"active":TranActive(this.SelectActive)},
     }
@@ -333,23 +333,27 @@ function TranActive(active) {
         },
         RefreshFishDatas(){
           if(this.FishId != null){
-            const fish1Data = localStorage.getItem("fish11");
+            const fish1Data = localStorage.getItem("fish21");
             const parsedFish1Data = JSON.parse(fish1Data);
             this.FishId = parsedFish1Data
-            const fish0Data = localStorage.getItem("fish10");
+            const fish0Data = localStorage.getItem("fish20");
             const parsedFish0Data = JSON.parse(fish0Data);
             this.FishId.push(...parsedFish0Data)
-            const fish2Data = localStorage.getItem("fish12");
+            const fish2Data = localStorage.getItem("fish22");
             const parsedFish2Data = JSON.parse(fish2Data);
             this.FishId.push(...parsedFish2Data)
             this.FishId = this.FishId.map((str) => {
               const num = parseInt(str, 10);
               return isNaN(num) ? 0 : num; 
             });
-            
-            this.bc = localStorage.getItem("NewBc").split(',').map(Number);
-            this.err = localStorage.getItem("NewErro").split(',').map(Number);
-            this.FishActive = localStorage.getItem("NewActive").split(',').map(Number);
+            const bcData = localStorage.getItem("NewBc2");
+            const errData = localStorage.getItem("NewErro2");
+            const fishActiveData = localStorage.getItem("NewActive2");
+            if (bcData && errData && fishActiveData) {
+                this.bc = bcData.split(',').map(Number);
+                this.err = errData.split(',').map(Number);
+                this.FishActive = fishActiveData.split(',').map(Number);
+            }
             this.datas = this.FishId.map((id, index) => ({
               id: id,
               bc: this.bc[index] + '%',
